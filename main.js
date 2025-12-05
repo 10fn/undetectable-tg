@@ -4,14 +4,11 @@ const {
 	globalShortcut,
 	systemPreferences,
 } = require('electron')
-const path = require('path')
 
 let overlayWindow = null
 let isOverlayVisible = true
 
 function requestPermissions() {
-	// systemPreferences.askForMediaAccess('screen')
-
 	if (process.platform === 'darwin') {
 		const accessibility = systemPreferences.isTrustedAccessibilityClient(false)
 		if (!accessibility) {
@@ -48,12 +45,27 @@ function createOverlayWindow() {
 		},
 	})
 
-	// Загружаем Telegram Web
 	overlayWindow.loadURL('https://web.telegram.org/k/')
 
-	overlayWindow.setOpacity(0.9)
+	overlayWindow.setOpacity(0.8)
+	// Всегда дефолтный курсор
+	overlayWindow.webContents.on('did-finish-load', () => {
+		overlayWindow.webContents.insertCSS(`
+            * {
+                cursor: default !important;
+            }
+            
+            a, button, input, textarea, select, 
+            [role="button"], [onclick], [tabindex] {
+                cursor: default !important;
+            }
+            
+            body {
+                cursor: default !important;
+            }
+        `)
+	})
 
-	// Защита от захвата экрана
 	overlayWindow.setContentProtection(true)
 	overlayWindow.setVisibleOnAllWorkspaces(true, {
 		visibleOnFullScreen: true,
@@ -63,31 +75,18 @@ function createOverlayWindow() {
 	overlayWindow.setAlwaysOnTop(true, 'screen-saver')
 	overlayWindow.setSkipTaskbar(true)
 
-	// Отладка
-	// overlayWindow.webContents.openDevTools({ mode: 'detach' })
-}
-
-function createMainWindow() {
-	const mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
-		show: true,
-		// transparent: true,
-		// backgroundColor: '#80000000',
-		opacity: 0.5,
-		webPreferences: {
-			nodeIntegration: true,
-		},
+	overlayWindow.on('close', () => {
+		app.quit()
 	})
 
-	mainWindow.loadFile('index.html')
-	mainWindow.hide()
+	// Отладка
+	// overlayWindow.webContents.openDevTools({ mode: 'detach' })
 }
 
 // Горячие клавиши
 function registerGlobalShortcuts() {
 	// Показать/скрыть
-	globalShortcut.register('CommandOrControl+Shift+T', () => {
+	globalShortcut.register('CommandOrControl+Shift+H', () => {
 		if (overlayWindow) {
 			if (isOverlayVisible) {
 				overlayWindow.hide()
@@ -133,22 +132,15 @@ function registerGlobalShortcuts() {
 
 app.whenReady().then(() => {
 	requestPermissions()
-	createMainWindow()
 	createOverlayWindow()
 	registerGlobalShortcuts()
-	app.dock.hide()
+	app.dock?.hide() // для mac
 
 	console.log('Приложение запущено!')
 	console.log('Горячие клавиши:')
-	console.log('  Cmd+Shift+T - показать/скрыть')
+	console.log('  Cmd+Shift+H - показать/скрыть')
 	console.log('  Cmd+Shift+M - переместить')
 	console.log('  Cmd+Shift+↑/↓ - изменить прозрачность')
-})
-
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit()
-	}
 })
 
 app.on('activate', () => {
@@ -159,4 +151,8 @@ app.on('activate', () => {
 
 app.on('will-quit', () => {
 	globalShortcut.unregisterAll()
+})
+
+app.on('close', () => {
+	app.quit()
 })
