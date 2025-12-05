@@ -10,7 +10,7 @@ let overlayWindow = null
 let isOverlayVisible = true
 
 function requestPermissions() {
-	systemPreferences.askForMediaAccess('screen')
+	// systemPreferences.askForMediaAccess('screen')
 
 	if (process.platform === 'darwin') {
 		const accessibility = systemPreferences.isTrustedAccessibilityClient(false)

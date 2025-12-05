@@ -1,5 +1,5 @@
 {
-	"name": "telegram-overlay-mac",
+	"name": "undetectable-tg",
 	"version": "1.0.0",
 	"description": "",
 	"main": "main.js",
@@ -9,7 +9,7 @@
 	"scripts": {
 		"start": "electron .",
 		"build:mac": "npx electron-builder --mac",
-		"build:win": "electron-builder --mac"
+		"build:win": "npx electron-builder --win"
 	},
 	"build": {
 		"appId": "com.telegram.overlay",
