@@ -1,0 +1,27 @@
+{
+	"name": "telegram-overlay-mac",
+	"version": "1.0.0",
+	"description": "",
+	"main": "main.js",
+	"devDependencies": {
+		"electron": "^39.2.5"
+	},
+	"scripts": {
+		"start": "electron .",
+		"build:mac": "npx electron-builder --mac",
+		"build:win": "electron-builder --mac"
+	},
+	"build": {
+		"appId": "com.telegram.overlay",
+		"mac": {
+			"category": "public.app-category.productivity",
+			"target": "dmg",
+			"hardenedRuntime": true,
+			"gatekeeperAssess": false
+		}
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs"
+}
