@@ -12,7 +12,7 @@
 ## Установка
 #### Wndows
 - `npm i`
-- `npm run bild:win`
+- `npm run build:win`
 - В папке `dist` появится папка `win-unpacked`. В ней будет исполняемый файл `undetectable-tg.exe`
 
 #### MacOS
